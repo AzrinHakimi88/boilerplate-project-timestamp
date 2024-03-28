@@ -31,27 +31,30 @@ app.get('/api/:date?', (req, res) => {
   // If date parameter is empty, use current time
   if (!dateInput) {
     res.json({'unix': new Date().getTime(), 'utc': new Date().toUTCString()})
-  }
-  const date = new Date(dateInput);
-  if(dateInput.includes('-')){
-    
-    if (isNaN(date.getTime())) {
-      res.json({ error: "Invalid Date" });
-      return;
-    }
-    const unix = date.getTime();
-    const utc = date.toUTCString();
-    res.json({ unix: unix, utc: utc });
-  }
-  else{
-    const unix = parseInt(dateInput);
-    const utc = new Date(unix).toUTCString();
-    res.json({ unix: unix, utc: utc });
+    return;
   }
 
-  
-  
+  if (!isNaN(dateInput)) { // Check if it's a Unix timestamp
+    const unix = parseInt(dateInput); // Convert seconds to milliseconds
+    const utc = new Date(unix).toUTCString();
+    res.json({ unix: unix, utc: utc });
+    return;
+  }
+
+  const date = new Date(dateInput);
+
+  // Check if the date is invalid
+  if (isNaN(date.getTime())) {
+    res.json({ error: "Invalid Date" });
+    return;
+  }
+
+  const unix = date.getTime();
+  const utc = date.toUTCString();
+  res.json({ unix: unix, utc: utc });
 });
+
+
 
 
 
