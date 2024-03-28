@@ -26,31 +26,33 @@ app.get("/api/hello", function (req, res) {
 
 
 app.get('/api/:date?', (req, res) => {
-  const { date } = req.params;
+  let dateInput = req.params.date;
 
-  if(!date){
-    res.json({'unix': new Date().getTime(), 'utc' : new Date().toGMTString()})
+  // If date parameter is empty, use current time
+  if (!dateInput) {
+    dateInput = new Date();
   }
-
-  
-  
-  if (date.includes('-')) { // Check if it's a date string
-    const validDate = new Date(date);
-    if(isNaN(validDate)){
-      res.json({'error' : 'Invalid date'})
-    }
-    const unix = new Date(date).getTime(); // Get Unix timestamp in milliseconds
-    const utc = new Date(unix).toUTCString(); // Convert Unix timestamp to UTC string
-    res.json({ 'unix': unix, 'utc': utc });
-  } else {
-    const unix = parseInt(date); // Parse Unix timestamp from string to integer
-    const utcDate = new Date(unix); // Convert Unix timestamp to milliseconds
-
-    const utc = utcDate.toUTCString(); // Convert date to UTC string
-    res.json({ 'unix': unix, 'utc': utc });
+  const date = new Date(dateInput);
+  if(dateInput.includes('-')){
     
+    if (isNaN(date.getTime())) {
+      res.json({ error: "Invalid Date" });
+      return;
+    }
+    const unix = date.getTime();
+    const utc = date.toUTCString();
+    res.json({ unix: unix, utc: utc });
   }
+  else{
+    const unix = parseInt(dateInput);
+    const utc = new Date(unix).toUTCString();
+    res.json({ unix: unix, utc: utc });
+  }
+
+  
+  
 });
+
 
 
 
