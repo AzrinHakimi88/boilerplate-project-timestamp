@@ -28,16 +28,17 @@ app.get("/api/hello", function (req, res) {
 app.get('/api/:date?', (req, res) => {
   const { date } = req.params;
 
+  if(!date){
+    res.json({'unix': new Date().getTime(), 'utc' : new Date().toGMTString()})
+  }
+
   const validDate = new Date(date);
+  
   if(isNaN(validDate)){
     res.json({'error' : 'Invalid date'})
   }
 
-  if(!date){
-    res.json({'unix': new Date().getTime(), 'utc' : new Date().toGMTString()})
-  }
   
-
   if (date.includes('-')) { // Check if it's a date string
     const unix = new Date(date).getTime(); // Get Unix timestamp in milliseconds
     const utc = new Date(unix).toUTCString(); // Convert Unix timestamp to UTC string
