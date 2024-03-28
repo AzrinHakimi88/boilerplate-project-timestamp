@@ -25,11 +25,28 @@ app.get("/api/hello", function (req, res) {
 });
 
 
-app.get('/api/:date?',(req,res) => {
-  const date = new Date()
-  const unix = Math.floor(date.getTime() / 1000)
-  res.json({'unix' : unix,'utc' : date.toGMTString()})
-})
+app.get('/api/:date?', (req, res) => {
+  const { date } = req.params;
+
+  if (date.includes('-')) { // Check if it's a date string
+    const unix = new Date(date).getTime(); // Get Unix timestamp in milliseconds
+    const utc = new Date(unix).toUTCString(); // Convert Unix timestamp to UTC string
+    res.json({ 'unix': unix, 'utc': utc });
+  } else {
+    const unix = parseInt(date); // Parse Unix timestamp from string to integer
+    const utcDate = new Date(unix); // Convert Unix timestamp to milliseconds
+
+    if (isNaN(unix)) { // Check if it's a valid Unix timestamp
+      res.json({ error: 'Invalid Unix Timestamp' });
+    } else {
+      const utc = utcDate.toUTCString(); // Convert date to UTC string
+      res.json({ 'unix': unix, 'utc': utc });
+    }
+  }
+});
+
+
+
 
 app.get('/api/')
 
