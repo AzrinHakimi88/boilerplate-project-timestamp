@@ -30,7 +30,7 @@ app.get('/api/:date?', (req, res) => {
 
   // If date parameter is empty, use current time
   if (!dateInput) {
-    dateInput = new Date();
+    res.json({'unix': new Date().getTime(), 'utc': new Date().toUTCString()})
   }
   const date = new Date(dateInput);
   if(dateInput.includes('-')){
